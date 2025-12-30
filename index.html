@@ -1,0 +1,503 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hokma</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* Estilos generales */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Courier New', monospace;
+        }
+        
+        body {
+            background-color: #0a0a0a;
+            color: #e0e0e0;
+            line-height: 1.6;
+            min-height: 100vh;
+            overflow-x: hidden;
+        }
+        
+        /* Contenedor principal */
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        /* Encabezado minimalista */
+        .header {
+            text-align: center;
+            padding: 60px 0 40px;
+            border-bottom: 1px solid #333;
+            margin-bottom: 40px;
+            position: relative;
+        }
+        
+        .site-title {
+            font-size: 4.5rem;
+            font-weight: 300;
+            letter-spacing: 8px;
+            color: #fff;
+            margin-bottom: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+        }
+        
+        .site-title:hover {
+            color: #530053;
+            letter-spacing: 10px;
+        }
+        
+        .site-subtitle {
+            font-size: 1.2rem;
+            color: #888;
+            letter-spacing: 4px;
+            font-weight: 300;
+        }
+        
+        /* Blog desplegable (oculto inicialmente) */
+        .blog-container {
+            display: none;
+            opacity: 0;
+            transform: translateY(20px);
+            transition: all 0.5s ease;
+            margin-top: 30px;
+        }
+        
+        .blog-container.active {
+            display: block;
+            opacity: 1;
+            transform: translateY(0);
+        }
+        
+        /* Menú de navegación del blog */
+        .blog-nav {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 40px;
+            border-bottom: 1px solid #333;
+        }
+        
+        .blog-tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            color: #888;
+            font-size: 1.1rem;
+            cursor: pointer;
+            position: relative;
+            transition: all 0.3s ease;
+            letter-spacing: 1px;
+        }
+        
+        .blog-tab:hover {
+            color: #00aaff;
+        }
+        
+        .blog-tab.active {
+            color: #fff;
+        }
+        
+        .blog-tab.active::after {
+            content: '';
+            position: absolute;
+            bottom: -1px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background-color: #00aaff;
+        }
+        
+        /* Contenido del blog */
+        .blog-content {
+            display: none;
+            animation: fadeIn 0.5s ease;
+        }
+        
+        .blog-content.active {
+            display: block;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+        
+        /* Sección About */
+        .about-section {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .about-title {
+            font-size: 2.2rem;
+            color: #fff;
+            margin-bottom: 30px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        
+        .about-text {
+            color: #aaa;
+            font-size: 1.1rem;
+            line-height: 1.8;
+            margin-bottom: 25px;
+            text-align: left;
+        }
+        
+        .hacker-quote {
+            font-style: italic;
+            color: #00aaff;
+            border-left: 3px solid #00aaff;
+            padding-left: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+        
+        /* Sección Posts */
+        .posts-section {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .posts-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 30px;
+        }
+        
+        .post-card {
+            background-color: rgba(20, 20, 20, 0.8);
+            border-radius: 3px;
+            padding: 25px;
+            border: 1px solid #333;
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        
+        .post-card:hover {
+            border-color: #00aaff;
+            transform: translateY(-5px);
+        }
+        
+        .post-date {
+            color: #00aaff;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+            letter-spacing: 1px;
+        }
+        
+        .post-title {
+            color: #fff;
+            font-size: 1.3rem;
+            margin-bottom: 15px;
+            font-weight: 400;
+        }
+        
+        .post-excerpt {
+            color: #888;
+            font-size: 0.95rem;
+            line-height: 1.6;
+        }
+        
+        /* Sección Social */
+        .social-section {
+            max-width: 800px;
+            margin: 0 auto;
+            text-align: center;
+        }
+        
+        .social-links {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 20px;
+            margin-top: 30px;
+        }
+        
+        .social-link {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #aaa;
+            text-decoration: none;
+            padding: 15px 25px;
+            border: 1px solid #333;
+            border-radius: 3px;
+            transition: all 0.3s ease;
+            min-width: 200px;
+        }
+        
+        .social-link:hover {
+            color: #00aaff;
+            border-color: #00aaff;
+            transform: translateY(-3px);
+        }
+        
+        .social-icon {
+            font-size: 1.5rem;
+            width: 30px;
+        }
+        
+        .social-name {
+            font-size: 1.1rem;
+            letter-spacing: 1px;
+        }
+        
+        /* Efectos de línea de separación */
+        .separator {
+            height: 1px;
+            background: linear-gradient(to right, transparent, #333, transparent);
+            margin: 40px 0;
+        }
+        
+        /* Pie de página */
+        .footer {
+            text-align: center;
+            padding: 40px 0 20px;
+            margin-top: 60px;
+            color: #555;
+            font-size: 0.9rem;
+            letter-spacing: 1px;
+            border-top: 1px solid #333;
+        }
+        
+        /* Responsive */
+        @media (max-width: 768px) {
+            .site-title {
+                font-size: 3rem;
+                letter-spacing: 5px;
+            }
+            
+            .site-subtitle {
+                font-size: 1rem;
+                letter-spacing: 2px;
+            }
+            
+            .blog-nav {
+                flex-direction: column;
+                align-items: center;
+            }
+            
+            .blog-tab {
+                width: 100%;
+                max-width: 300px;
+                margin-bottom: 5px;
+            }
+            
+            .posts-grid {
+                grid-template-columns: 1fr;
+            }
+            
+            .social-link {
+                min-width: 150px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header class="header">
+            <h1 class="site-title" id="siteTitle">Hokma</h1>
+            <p class="site-subtitle">CONOCIMIENTO | SEGURIDAD | COMUNIDAD</p>
+            
+            <!-- Blog desplegable -->
+            <div class="blog-container" id="blogContainer">
+                <!-- Navegación del blog -->
+                <nav class="blog-nav">
+                    <button class="blog-tab active" data-tab="about">ABOUT</button>
+                    <button class="blog-tab" data-tab="posts">POSTS</button>
+                    <button class="blog-tab" data-tab="social">SOCIAL</button>
+                </nav>
+                
+                <!-- Contenido del blog -->
+                <div class="blog-content active" id="aboutContent">
+                    <div class="about-section">
+                        <h2 class="about-title">SOBRE MI</h2>
+                        <p class="about-text">
+                            Hokma significa 'sabiduría' en hebreo, pero representa algo más profundo: el conocimiento que se transforma en acción, que se comparte y multiplica.
+                        </p>
+                        <p class="about-text">
+                            La historia de la tecnología no es la historia de genios solitarios, sino de comunidades que construyen juntas. Apple nació de clubes donde se compartían esquemas libremente. Linux creció porque miles compartieron código. Internet existe porque sus creadores rechazaron el secreto.
+                        </p>
+                        
+                        <div class="hacker-quote">
+                            "La única forma de descubrir los límites de lo posible es aventurarse un poco más allá, hacia lo imposible." - Arthur C. Clarke
+                        </div>
+                        
+                        <p class="about-text">
+                            Hokma es mi compromiso con esa tradición. Aquí comparto herramientas, metodologías y conocimiento en hacking ético, porque creo que la sabiduría que no se comparte, simplemente no es sabiduría.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="blog-content" id="postsContent">
+                    <div class="posts-section">
+                        <h2 class="about-title">ÚLTIMOS POSTS</h2>
+                        <div class="posts-grid">
+                            <div class="post-card">
+                                <div class="post-date">Dic</div>
+                                <h3 class="post-title">Introducción al Pentesting Web</h3>
+                                <p class="post-excerpt">Guía completa para comenzar en pruebas de penetración web, cubriendo metodologías, herramientas esenciales y técnicas básicas.</p>
+                            </div>
+                            
+                            <div class="post-card">
+                                <div class="post-date">2025</div>
+                                <h3 class="post-title">Análisis de Malware</h3>
+                                <p class="post-excerpt">Desglose de un malware real, analizando su comportamiento, persistencia y técnicas de evasión.</p>
+                            </div>
+                            
+                            <div class="post-card">
+                                <div class="post-date">5020</div>
+                                <h3 class="post-title">Automatización con Python para Seguridad</h3>
+                                <p class="post-excerpt">Scripts útiles para automatizar tareas comunes en auditorías de seguridad y análisis de redes.</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="blog-content" id="socialContent">
+                    <div class="social-section">
+                        <h2 class="about-title">CONÉCTATE</h2>
+                        <p class="about-text" style="text-align: center; margin-bottom: 30px;">
+                            Sigueme en mis redes para poder platicar y talvez compartir cosas juntos como herramientas.
+                        </p>
+                        
+                        <div class="social-links">
+                            <a href="#" class="social-link">
+                                <i class="fab fa-github social-icon"></i>
+                                <span class="social-name">GitHub</span>
+                            </a>
+                            
+                            <a href="#" class="social-link">
+                                <i class="fab fa-linkedin social-icon"></i>
+                                <span class="social-name">linkedin</span>
+                            </a>
+                            
+                            <a href="#" class="social-link">
+                                <i class="fab fa-discord social-icon"></i>
+                                <span class="social-name">Discord</span>
+                            </a>
+                            
+                            <a href="#" class="social-link">
+                                <i class="fab fa-youtube social-icon"></i>
+                                <span class="social-name">YouTube</span>
+                            </a>
+                        </div>
+                        
+                        <div class="separator"></div>
+                        
+                        <p class="about-text" style="text-align: center;">
+                            Para colaboraciones, preguntas técnicas o reportar problemas de seguridad, contáctanos en: <span style="color: #00aaff;"></span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <div class="separator"></div>
+        
+        <footer class="footer">
+            <p>© 2025 HOKMA. Todo el contenido es con fines de investigacion.</p>
+            <p style="margin-top: 10px;">CONOCIMIENTO | SEGURIDAD | COMUNIDAD</p>
+        </footer>
+    </div>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const siteTitle = document.getElementById('siteTitle');
+            const blogContainer = document.getElementById('blogContainer');
+            const blogTabs = document.querySelectorAll('.blog-tab');
+            const blogContents = document.querySelectorAll('.blog-content');
+            
+            // Estado del blog (abierto/cerrado)
+            let blogOpen = false;
+            
+            // Función para abrir/cerrar el blog
+            function toggleBlog() {
+                if (!blogOpen) {
+                    // Abrir blog
+                    blogContainer.classList.add('active');
+                    blogOpen = true;
+                    
+                    // Animación del título
+                    siteTitle.style.color = '#00aaff';
+                    siteTitle.style.letterSpacing = '10px';
+                } else {
+                    // Cerrar blog
+                    blogContainer.classList.remove('active');
+                    blogOpen = false;
+                    
+                    // Restaurar título
+                    siteTitle.style.color = '#fff';
+                    siteTitle.style.letterSpacing = '8px';
+                }
+            }
+            
+            // Función para cambiar pestañas del blog
+            function switchTab(tabName) {
+                // Remover clase active de todas las pestañas
+                blogTabs.forEach(tab => {
+                    tab.classList.remove('active');
+                });
+                
+                // Ocultar todos los contenidos
+                blogContents.forEach(content => {
+                    content.classList.remove('active');
+                });
+                
+                // Activar pestaña seleccionada
+                document.querySelector(`.blog-tab[data-tab="${tabName}"]`).classList.add('active');
+                
+                // Mostrar contenido seleccionado
+                document.getElementById(`${tabName}Content`).classList.add('active');
+            }
+            
+            // Event listeners
+            siteTitle.addEventListener('click', toggleBlog);
+            
+            blogTabs.forEach(tab => {
+                tab.addEventListener('click', function() {
+                    const tabName = this.getAttribute('data-tab');
+                    switchTab(tabName);
+                });
+            });
+            
+            // Efecto de escritura en el título (opcional)
+            const titleText = "HOKMA";
+            let titleIndex = 0;
+            const titleElement = document.querySelector('.site-title');
+            
+            function typeTitle() {
+                if (titleIndex < titleText.length) {
+                    titleElement.textContent += titleText.charAt(titleIndex);
+                    titleIndex++;
+                    setTimeout(typeTitle, 150);
+                }
+            }
+            
+            // Iniciar efecto de escritura solo si el título está vacío
+            if (titleElement.textContent.trim() === "") {
+                titleElement.textContent = "";
+                setTimeout(typeTitle, 500);
+            }
+            
+            // Efecto hover para las tarjetas de posts
+            const postCards = document.querySelectorAll('.post-card');
+            postCards.forEach(card => {
+                card.addEventListener('click', function() {
+                    
+                    alert('apenas lo escribire aguanta xD.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>
